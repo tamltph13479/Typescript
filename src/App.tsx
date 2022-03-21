@@ -3,7 +3,7 @@ import logo from './logo.svg'
 import './App.css'
 import ShowInfo from "./components/ShowInfo"
 import { Product } from './types/product'
-import { list } from './api/products'
+import { add, list } from './api/products'
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom'
 import WebsiteLayout from './pages/layouts/WebsiteLayout'
 import HomePage from './pages/HomePage'
@@ -13,6 +13,7 @@ import AdminLayout from './pages/layouts/AdminLayout'
 import Dashboard from './pages/Dashboard'
 import ProductManager from './pages/ProductManager'
 import ProductAdd from './pages/ProductAdd'
+
 function App() {
   const [products, setProducts] = useState<{ _id: number, name: string }[]>([])
   useEffect(() => {
@@ -21,7 +22,13 @@ function App() {
       setProducts(data);
     }
     getProducts();
-  })
+  }, []);
+
+  // Add Product
+  const onHandleAdd = async (product: any) => {
+    const { data } = await add(product);
+    setProducts([...products, data]);
+  }
   return (
     <div className="App">
       <header>
@@ -38,6 +45,7 @@ function App() {
             <Route path="product">
               <Route index element={<ProductPage />} />
               <Route path=":id" element={<ProductDetail />} />
+              <Route path="/product/add" element={< ProductAdd onAdd={onHandleAdd} />} />
             </Route>
           </Route>'
           <Route path="admin" element={<AdminLayout />}>
